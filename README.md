@@ -15,9 +15,8 @@
 OpenCopilot allows you to have your own product's AI copilot. It integrates with your underlying APIs and can execute API calls whenever needed. It uses LLMs to determine if the user's request requires calling an API endpoint. Then, it decides which endpoint to call and passes the appropriate payload based on the given API definition.
 
 ## How does it work?
-- Provide your API/backend definition, including your public endpoints and how to call them. Currently, OpenCopilot supports Swagger OpenAPI 3.0. We're also working on a UI to allow you to dynamically add endpoints.
+- Provide your APIs/actions definition, including your public endpoints and how to call them. Currently, OpenCopilot supports Swagger OpenAPI 3.0 for bulk import.
 - OpenCopilot validates your schema to achieve the best results.
-- We feed the API definition to an LLM.
 - Finally, you can integrate our user-friendly chat bubble into your SaaS app.
 
 
@@ -36,13 +35,11 @@ OpenCopilot allows you to have your own product's AI copilot. It integrates with
 git clone git@github.com:openchatai/OpenCopilot.git
 ```
 
-- Update the `.env` file located in the `llm-server` directory with your `OPENAI_API_KEY`. You can use the `.env.example` file as a reference:
+In the `.env` file located in the `llm-server` directory, make sure to replace the placeholder value for the `OPENAI_API_KEY` variable with your actual token:
 
 ```
 OPENAI_API_KEY=YOUR_TOKEN_HERE
-MYSQL_URI=mysql+pymysql://dbuser:dbpass@mysql:3306/opencopilot
 ```
-
 
 ### For Linux Machines
 
@@ -57,7 +54,7 @@ make install
 If you are using an ARM machine, specifically Mac Silicon, use the following command to install dependencies and set up the environment:
 
 ```bash
-make arm
+make install-arm
 ```
 
 Once the installation is complete, you can access the OpenCopilot console at [http://localhost:8888](http://localhost:8888).

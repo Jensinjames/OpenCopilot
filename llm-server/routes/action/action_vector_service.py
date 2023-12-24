@@ -3,13 +3,14 @@ from typing import Dict, Any
 from typing import List
 
 from langchain.docstore.document import Document
-from qdrant_client import QdrantClient, models
+from qdrant_client import models
 
 from entities.action_entity import ActionDTO
 from shared.utils.opencopilot_utils import get_vector_store
 from shared.utils.opencopilot_utils.interfaces import StoreOptions
+from utils.llm_consts import initialize_qdrant_client
 
-client = QdrantClient(url=os.getenv("QDRANT_URL", "http://qdrant:6333"))
+client = initialize_qdrant_client()
 
 actions_collection = get_vector_store(StoreOptions("actions"))
 
@@ -26,7 +27,8 @@ def get_action(point_id: str):
 def create_actions(actions: List[ActionDTO]):
     documents: List[Document] = []
     for action in actions:
-        document = Document(page_content=action.description + action.name)
+        description = action.description if action.description else ""
+        document = Document(page_content=description + action.name)
         document.metadata.update(action.model_dump())
 
         documents.append(document)
@@ -38,7 +40,11 @@ def create_actions(actions: List[ActionDTO]):
 def create_action(action: ActionDTO):
     documents: List[Document] = []
 
-    document = Document(page_content=action.description + " " + action.name)
+    description = str(action.description) if action.description else ""
+    name = str(action.name) if action.name else ""
+
+    document = Document(page_content=description + " " + name)
+
     document.metadata.update(action.model_dump())
 
     documents.append(document)
@@ -80,9 +86,7 @@ def get_all_actions(chatbot_id: str, limit: int = 20, offset: int = 0) -> List[P
 def update_action(action: ActionDTO, point_id: str):
     client.set_payload(
         collection_name="actions",
-        payload={
-            "metadata": action
-        },
+        payload={"metadata": action},
         points=[point_id],
     )
 

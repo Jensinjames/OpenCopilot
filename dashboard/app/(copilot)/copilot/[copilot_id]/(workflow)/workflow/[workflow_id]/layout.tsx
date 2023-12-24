@@ -6,10 +6,10 @@ import React from 'react'
 import { useAsyncFn } from 'react-use'
 import { syncWorkflowById as $syncWorkflowById, getFlowById } from '@/data/new_flows'
 import { toast } from '@/components/ui/use-toast';
-import { useCopilot } from '../../../_context/CopilotProvider'
 import useSWR from 'swr'
 import { getActionsByBotId } from '@/data/actions'
 import _, { uniqueId } from 'lodash'
+import { useCopilot } from '@/app/(copilot)/copilot/_context/CopilotProvider'
 
 type Props = {
     children: React.ReactNode;
@@ -48,38 +48,42 @@ function Header({ workflow_id }: { workflow_id: string }) {
         }
     });
 
-    return <HeaderShell className='justify-between'>
-        <div className=''>
-            <h2 className='text-lg font-semibold'>{state.name}</h2>
-            <p className='text-xs'>
-                {state.description}
-            </p>
-        </div>
-        <div className='space-x-2'>
-            <Button onClick={async () => {
-                if (state.flow_id) {
-                    const response = await syncWorkflowById(state.flow_id, {
-                        blocks: state.blocks,
-                        name: state.name!,
-                        description: state.description!
-                    })
-                    if (response.data) {
-                        toast({
-                            title: 'Flow saved',
-                            description: 'Flow saved successfully',
-                            variant: 'success'
+    return <>
+
+        <HeaderShell className='justify-between'>
+            <div className=''>
+                <h2 className='text-lg font-semibold'>{state.name}</h2>
+                <p className='text-xs'>
+                    {state.description}
+                </p>
+            </div>
+            <div className='space-x-2'>
+                <Button onClick={async () => {
+                    if (state.flow_id) {
+                        const response = await syncWorkflowById(state.flow_id, {
+                            blocks: state.blocks,
+                            name: state.name!,
+                            description: state.description!
                         })
-                        _.delay(mutateFlow, 1000)
+                        if (response.data) {
+                            toast({
+                                title: 'Flow saved',
+                                description: 'Flow saved successfully',
+                                variant: 'success'
+                            })
+                            _.delay(mutateFlow, 1000)
+                        }
                     }
-                }
-            }}
-                disabled={$isLoading}>
-                {
-                    $isLoading ? 'Saving...' : 'Save'
-                }
-            </Button>
-        </div>
-    </HeaderShell>
+                }}
+                    disabled={$isLoading}>
+                    {
+                        $isLoading ? 'Saving...' : 'Save'
+                    }
+                </Button>
+            </div>
+        </HeaderShell>
+    </>
+
 }
 function WorkflowLayout({
     children,

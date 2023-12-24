@@ -24,7 +24,7 @@ async def run_actions(
 ) -> str:
     api_request_data = {}
     prev_api_response = ""
-    apis_calls_history = {"Workflow Name": flow.name}
+    apis_calls_history = {}
     current_state = process_state(app, headers)
 
     blocks = flow.blocks
@@ -38,15 +38,20 @@ async def run_actions(
                     continue
 
                 api_payload = await generate_api_payload(
-                    text,
-                    operation_id,
-                    prev_api_response,
-                    app,
-                    current_state,
+                    text=text,
+                    action=action,
+                    prev_api_response=prev_api_response,
+                    app=app,
+                    current_state=current_state,
                 )
                 api_request_data[operation_id] = api_payload.__dict__
 
                 api_response = make_api_request(headers=headers, **api_payload.__dict__)
+
+                logger.warn(
+                    "Config map is not defined for this operationId",
+                    paylooad=api_response.text,
+                )
 
                 """ 
                 if a custom transformer function is defined for this operationId use that, otherwise forward it to the llm,

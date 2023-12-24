@@ -3,13 +3,14 @@ from typing import Dict, Any
 from typing import List
 
 from langchain.docstore.document import Document
-from qdrant_client import QdrantClient, models
+from qdrant_client import models
 
 from entities.flow_entity import FlowDTO
 from shared.utils.opencopilot_utils import get_vector_store
 from shared.utils.opencopilot_utils.interfaces import StoreOptions
+from utils.llm_consts import initialize_qdrant_client
 
-client = QdrantClient(url=os.getenv("QDRANT_URL", "http://qdrant:6333"))
+client = initialize_qdrant_client()
 
 flows_collection = get_vector_store(StoreOptions("flows"))
 
@@ -48,7 +49,8 @@ def create_flow(flow: FlowDTO):
     document = Document(page_content=flow.description + " " + flow.name)
     document.metadata.update({
         "bot_id": str(flow.bot_id),
-        "flow_id": str(flow.id)
+        "flow_id": str(flow.id),
+        "operation_id": flow.operation_id
     })
 
     documents.append(document)

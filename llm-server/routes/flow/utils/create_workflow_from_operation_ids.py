@@ -1,9 +1,8 @@
 from typing import List
-import uuid
 
 from entities.action_entity import ActionDTO
 from entities.flow_entity import FlowDTO, Block
-from models.repository.action_repo import find_action_by_operation_id
+from models.repository.action_repo import find_action_by_method_id_and_bot_id
 
 
 def create_flow_from_operation_ids(
@@ -17,9 +16,11 @@ def create_flow_from_operation_ids(
     flow.blocks = []
 
     for operation_id in operation_ids:
-        block = Block(actions=[], name="", next_on_fail=None,next_on_success=None, order=0)
-        operation = find_action_by_operation_id(operation_id)
-        action = ActionDTO(bot_id=bot_id, name="Dynamic action", api_endpoint=operation.api_endpoint, description=operation.description, request_type=operation.request_type, operation_id=operation_id)
+        block = Block(actions=[], name="", next_on_fail=None, next_on_success=None, order=0)
+        operation = find_action_by_method_id_and_bot_id(operation_id=operation_id, bot_id=bot_id)
+        action = ActionDTO(bot_id=bot_id, name=operation.name, api_endpoint=operation.api_endpoint,
+                           description=operation.description, request_type=operation.request_type,
+                           operation_id=operation_id, payload=operation.payload)
 
         block.name = "Dynamic Block"
         block.actions.append(action)

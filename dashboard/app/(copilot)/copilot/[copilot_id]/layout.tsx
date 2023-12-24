@@ -25,6 +25,7 @@ import {
 import { CopilotProvider } from "../_context/CopilotProvider";
 import { Link } from "@/lib/router-events";
 import { Logo } from "@/components/domain/Logo";
+import { SearchBtn } from "../../_parts/SearchBtn";
 
 type Props = {
   children: React.ReactNode;
@@ -54,6 +55,7 @@ export default function CopilotLayout({ children, params }: Props) {
             <CopilotLayoutNavLink
               href={copilotBase + "/workflow"}
               IconComponent={Workflow}
+              segment="workflow"
               label="Flows & Actions"
             />
             <CopilotLayoutNavLink
@@ -74,8 +76,9 @@ export default function CopilotLayout({ children, params }: Props) {
             />
           </div>
         </div>
-        <div className="mx-auto pb-5">
+        <div className="mx-auto pb-5 flex flex-col items-center gap-2">
           <Separator className="mb-5" />
+          <SearchBtn />
           <DropdownMenu modal={false}>
             <TooltipProvider>
               <Tooltip>
